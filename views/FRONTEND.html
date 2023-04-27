@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appoint Form</title>
+</head>
+<body>
+    <div id="form">
+        <form >
+
+            <div class="form-control">
+                <input type="text" name="name" placeholder="name" id="name">
+            </div>
+
+
+            <div class="form-control">
+                <input type="tel" name="phone" placeholder="Phone No" id="phone">
+            </div>
+
+
+            <div class="form-control">
+                <input type="email" name="email" placeholder="email" id="email">
+            </div>
+
+
+            <div class="form-control">
+                <button type="submit">Submit</button>
+            </div>
+            
+        </form>
+    </div>
+    <div class="list">
+        <ul id="list">
+
+        </ul>
+    </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.6/axios.min.js"></script>
+<script>
+    let form=document.getElementById('form');
+    form.addEventListener('submit',dataBase);
+    async function dataBase(e) {
+            e.preventDefault();
+            let name = document.getElementById('name').value;
+            let phone = document.getElementById('phone').value;
+            let email = document.getElementById('email').value;
+            const obj = {
+                name,
+                phone,
+                email
+            };
+            try {
+                let response = await axios.post("http://localhost:4000/add-details", obj)
+                showProduct(response.data);
+            }
+            catch (err) {
+                console.log(err);
+            }
+           
+        }
+        document.addEventListener("DOMContentLoaded", async () => {
+            try {
+
+                let response2 = await axios.get("http://localhost:4000/get-details")
+                let response = response2.data;
+                for (var i = 0; i < response.length; i++) {
+                    showProduct(response[i]);
+                }
+               
+            }
+            catch (err) {
+                console.log(err);
+            }
+        })
+
+        function showProduct(user) {
+            let item = document.getElementById('list');
+            let fin = user.name + "-" + user.phone+"-"+user.email;
+            let li = document.createElement('li');
+            li.appendChild(document.createTextNode(fin));
+            let deleteBtn = document.createElement('button');
+            deleteBtn.className = "btn btn-danger btn-sm float-right delete";
+            deleteBtn.textContent = 'Delete Product';
+            li.appendChild(deleteBtn);
+            item.appendChild(li);
+            deleteBtn.onclick = async () => {
+                await axios.delete(`http://localhost:4000/delete-detail/${user.id}`)
+                item.removeChild(li);
+                
+            }
+        }
+      
+
+    </script>
+</body>
+
+</html>
+</script>
+
+</body>
+</html>
